@@ -1,11 +1,11 @@
 Summary:	Powerful command-line packet analyzer
 Name:		tcpdump
-Version:	4.4.0
+Version:	4.5.1
 Release:	1
 License:	BSD
 Group:		Networking/Utilities
 Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
-# Source0-md5:	6f75aabcffd012f73bd7c331bb5d8232
+# Source0-md5:	973a2513d0076e34aa9da7e15ed98e1b
 URL:		http://www.tcpdump.org/
 BuildRequires:	libcap-ng-devel
 BuildRequires:	libpcap-devel
@@ -19,9 +19,14 @@ a network interface that match the boolean expression.
 %prep
 %setup -q
 
+# freddix specific fix, avoid searching local directries
+%{__sed} -i '446,447d' aclocal.m4
+
 %build
 export CFLAGS="%{rpmcflags} %{rpmcppflags}"
 export LDFLAGS="%{rpmldflags}"
+%{__aclocal}
+%{__autoconf}
 %configure \
 	--enable-ipv6 \
 	--with-crypto
@@ -40,7 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc CHANGES CREDITS LICENSE README
+%doc CHANGES CREDITS LICENSE
 %attr(755,root,root) %{_sbindir}/tcpdump
 %{_mandir}/man1/tcpdump.1*
 
